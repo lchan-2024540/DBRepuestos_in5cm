@@ -1,7 +1,10 @@
 package com.Luischan.RepuestosAutomotrices.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
+@SuppressWarnings("JpaDataSourceORMInspection")
 @Entity
 @Table(name ="Empleados")
 public class Empleado {
@@ -11,15 +14,19 @@ public class Empleado {
     @Column(name = "id_empleado")
     private Integer idEmpleado;
 
+    @NotBlank(message = "El nombre del empleado no puede estar vacío")
     @Column(name = "nombre_empleado")
     private String nombreEmpleado;
 
+    @NotBlank(message = "El apellido del empleado no puede estar vacío")
     @Column(name = "apellido_empleado")
     private String apellidoEmpleado;
 
     @Column(name = "puesto_empleado")
     private String puestoEmpleado;
 
+    @NotBlank(message = "El email del empleado no puede estar vacío")
+    @Email(message = "Debe ser un email válido")
     @Column(name = "email_empleado")
     private String emailEmpleado;
 
