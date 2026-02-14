@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+@SuppressWarnings("JpaDataSourceORMInspection")
 @Entity
 @Table(name ="Proveedores")
 public class Proveedor {
