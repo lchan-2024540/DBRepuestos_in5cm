@@ -5,6 +5,7 @@ import com.Luischan.RepuestosAutomotrices.repository.ProveedorRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProveedorServiceImplements implements ProveedorService {
@@ -26,8 +27,17 @@ public class ProveedorServiceImplements implements ProveedorService {
 
     @Override
     public Proveedor saveProveedor(Proveedor proveedor) throws RuntimeException {
-        // Validar que el email sea de gmail, yahoo u outlook
         validarDominioEmail(proveedor.getEmailProveedor());
+
+        Optional<Proveedor> proveedorExistente = proveedorRepository
+                .findByNombreProveedor(proveedor.getNombreProveedor());
+
+        if (proveedorExistente.isPresent()) {
+            throw new IllegalArgumentException(
+                    "Ya existe un proveedor con el nombre " + proveedor.getNombreProveedor()
+            );
+        }
+
         return proveedorRepository.save(proveedor);
     }
 
@@ -36,6 +46,16 @@ public class ProveedorServiceImplements implements ProveedorService {
         Proveedor proveedorExistente = proveedorRepository.findById(id).orElse(null);
         if (proveedorExistente != null) {
             validarDominioEmail(proveedor.getEmailProveedor());
+
+            Optional<Proveedor> proveedorConMismoNombre = proveedorRepository
+                    .findByNombreProveedor(proveedor.getNombreProveedor());
+
+            if (proveedorConMismoNombre.isPresent() &&
+                    !proveedorConMismoNombre.get().getIdProveedor().equals(id)) {
+                throw new IllegalArgumentException(
+                        "Ya existe un proveedor con el nombre " + proveedor.getNombreProveedor()
+                );
+            }
 
             proveedorExistente.setNombreProveedor(proveedor.getNombreProveedor());
             proveedorExistente.setTelefonoProveedor(proveedor.getTelefonoProveedor());
