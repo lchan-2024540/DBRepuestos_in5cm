@@ -34,6 +34,19 @@ public class VentaServiceImplements implements VentaService {
         validarEmpleadoExiste(venta.getIdEmpleado());
         validarRepuestoExiste(venta.getIdRepuesto());
 
+        Optional<Venta> ventaExistente = ventaRepository
+                .findByFechaVentaAndIdEmpleadoAndIdRepuesto(
+                        venta.getFechaVenta(),
+                        venta.getIdEmpleado(),
+                        venta.getIdRepuesto()
+                );
+
+        if (ventaExistente.isPresent()) {
+            throw new IllegalArgumentException(
+                    "Ya existe una venta registrada para este empleado, repuesto y fecha"
+            );
+        }
+
         return ventaRepository.save(venta);
     }
 
@@ -49,6 +62,20 @@ public class VentaServiceImplements implements VentaService {
         if (ventaExistente.isPresent()) {
             validarEmpleadoExiste(venta.getIdEmpleado());
             validarRepuestoExiste(venta.getIdRepuesto());
+
+            Optional<Venta> ventaConMismaCombinacion = ventaRepository
+                    .findByFechaVentaAndIdEmpleadoAndIdRepuesto(
+                            venta.getFechaVenta(),
+                            venta.getIdEmpleado(),
+                            venta.getIdRepuesto()
+                    );
+
+            if (ventaConMismaCombinacion.isPresent() &&
+                    !ventaConMismaCombinacion.get().getIdVenta().equals(id)) {
+                throw new IllegalArgumentException(
+                        "Ya existe una venta registrada para este empleado, repuesto y fecha"
+                );
+            }
 
             Venta ventaActualizada = ventaExistente.get();
             ventaActualizada.setFechaVenta(venta.getFechaVenta());
